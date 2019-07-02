@@ -44,9 +44,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="zxing">
       <HintPath>.\zxing.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="zxing.presentation">
       <HintPath>.\zxing.presentation.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -26,32 +26,17 @@ namespace EslLibCom
         bool portIsOpen();
 
         [DispId(3)]
-        bool EslSeting();
+        Object EslSeting();
 
         [DispId(4)]
-        bool EslSeting2Color();
-
-        [DispId(5)]
-        bool eslImagePix();
-
-        [DispId(6)]
-        bool eslImagePix2Color();
-
-        [DispId(7)]
-        bool eslImageLockBit(Bitmap bmp);
+        Object EslSeting2Color();
 
         [DispId(8)]
         bool sendWriteEslClose();
 
         [DispId(9)]
-        bool eslUUIDRead();
+        Object eslUUIDRead();
 
-        [DispId(10)]
-        void SMCEslReceiveEventNow();
-
-
-        [DispId(11)]
-        bool img();
 
 
 
@@ -68,12 +53,18 @@ namespace EslLibCom
         Bitmap bmp;
         Socket bcSocket;
         private List<Socket> clientSockets = new List<Socket>();
+        Object ddt = null;
+        //开始监听
+        
         public bool portOpen(int portName, int baurate)
         {
             string portNameS = "COM" + portName;
             string baurateS = baurate.ToString();
             bool dd = EslLib.portOpen(portNameS, baurateS);
             // Console.WriteLine("dd  "+dd);
+            if(dd)
+                EslLib.onSMCEslReceiveEvent += new EventHandler(OnSMCEslReceiveEvent);
+
             return dd;
         }
 
@@ -82,35 +73,115 @@ namespace EslLibCom
             return EslLib.portIsOpen();
         }
 
-        public bool EslSeting()
+
+
+        public Object EslSeting()
         {
-            return EslLib.EslSeting();
+            if (img())
+            {
+                if (eslImagePix())
+                {
+                    ddt = null;
+                    EslLib.EslSeting();
+                    while (ddt == null)
+                    {
+                        Console.Write(ddt);
+                    };
+                    while (ddt != null)
+                    {
+
+
+                        if (ddt.ToString().Contains("status:False"))
+                            break;
+                        if (ddt.ToString().Contains("msgId:4"))
+                            break;
+                        if (ddt.ToString().Contains("msgId:5"))
+                        {
+                            ddt = "msgId:2;status:False";
+                            break;
+                        }
+                    };
+                }
+                else
+                {
+                    ddt = "msgId:6,stasus:False";
+                }
+            }
+            else
+            {
+                ddt = "msgId:5,stasus:False";
+            }
+            return ddt;
         }
 
-        public bool EslSeting2Color()
+        public Object EslSeting2Color()
         {
-            return EslLib.EslSeting2Color();
+            if (img())
+            {
+                if (eslImagePix2Color())
+                {
+                    ddt = null;
+                    EslLib.EslSeting2Color();
+                    while (ddt == null)
+                    {
+                        Console.Write(ddt);
+                    };
+                    while (ddt != null)
+                    {
+                       // Console.WriteLine("ddt "+ddt);
+
+                        if (ddt.ToString().Contains("status:False"))
+                            break;
+                        if (ddt.ToString().Contains("msgId:4"))
+                            break;
+                        if (ddt.ToString().Contains("msgId:5"))
+                        {
+                            ddt = "msgId:2;status:False";
+                            break;
+                        }
+                           
+                    };
+                }
+                else
+                {
+                    ddt = "msgId:6,stasus:False";
+                }
+            }
+            else
+            {
+                ddt = "msgId:5,stasus:False";
+            }
+            return ddt;
         }
 
-        public bool eslImagePix()
+        private bool eslImagePix()
         {
             return EslLib.eslImagePix(bmp);
         }
 
-        public bool eslImagePix2Color()
+        private bool eslImagePix2Color()
         {
             return EslLib.eslImagePix2Color(bmp);
         }
 
-        public bool eslImageLockBit(Bitmap bmp)
+        private bool eslImageLockBit(Bitmap bmp)
         {
             return EslLib.eslImageLockBit(bmp);
         }
 
-        public bool eslUUIDRead()
+        public Object eslUUIDRead()
         {
-           // Console.WriteLine("eslUUIDRead   ");
-            return EslLib.eslUUIDRead();
+         //   Console.WriteLine("eslUUIDRead INININ" );
+            ddt = null;
+            EslLib.eslUUIDRead();
+            
+            do
+            {
+                Console.Write(ddt);
+            } while (ddt==null);
+
+          // Console.WriteLine("eslUUIDRead  DLL "+ddt);
+            return ddt;
         }
 
         public bool sendWriteEslClose()
@@ -118,7 +189,7 @@ namespace EslLibCom
             return EslLib.sendWriteEslClose();
         }
 
-        public void SMCEslReceiveEventNow()
+        private void SMCEslReceiveEventNow()
         {
 
             try {
@@ -147,7 +218,7 @@ namespace EslLibCom
             Socket socket = null;
             try
             {
-                socket = bcSocket.EndAccept(result); // The objectDisposedException will come here... thus, it is to be expected!
+                socket = bcSocket.EndAccept(result); // The ObjectDisposedException will come here... thus, it is to be expected!
                                                          //Do something as you see it needs on client acceptance such as listing
                 clientSockets.Add(socket); //may be needed later
                // socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(receiveCallback), socket);
@@ -166,7 +237,7 @@ namespace EslLibCom
             public Color tagColor = Color.Black;
         }
 
-        public bool img() {
+        private bool img() {
             try {
                 txtData tag1_1 = new txtData();
 
@@ -574,7 +645,7 @@ namespace EslLibCom
             
         }
 
-        public Bitmap setESLimageDemo_29(Panel panel1, string tag1_1)
+        private Bitmap setESLimageDemo_29(Panel panel1, string tag1_1)
         {
             Bitmap bmp = new Bitmap(296, 128);
             try {
@@ -602,7 +673,7 @@ namespace EslLibCom
                         int y = ((Label)control).Location.Y;
                         int width = ((Label)control).Width;
                         int height = ((Label)control).Height;
-                        //      Console.WriteLine(string.Concat(new object[] { x, ",", y, "  w:", width, ", h:", height }));
+                        //      Console.WriteLine(string.Concat(new Object[] { x, ",", y, "  w:", width, ", h:", height }));
                         bmp = mSmcEink.ConvertTextToImageDemo(bmp, (Label)control, Color.White, x, y);
                     }
                     else if (control is Panel)
@@ -632,13 +703,6 @@ namespace EslLibCom
                         barcodeWriter.Options.Margin = 0;
                         barcodeWriter.Options.PureBarcode = true;
                         bar93 = barcodeWriter.Write(tag1_1);
-                        //   Console.WriteLine("barW" + bar93.Width);
-                        //  Console.WriteLine("barH" + bar93.Height);
-
-
-                        // this.pictureBox2.Image = bar;
-                        // Console.WriteLine(string.Concat(new object[] { "PictureBox ", num, ",", y1, "  w:", width1, ", h:", height1 }));
-                        //    this.bmp = this.mSmcDataToImage.ConvertImageToImage(this.bmp, this.pictureBox2.Image, num, y1, this.pictureBox2.Width, this.pictureBox2.Height);
                         bmp = mSmcEink.ConvertBarToImage(bmp, bar93, num, y1);
                     }
                     else if (control is Label)
@@ -647,7 +711,7 @@ namespace EslLibCom
                         int num1 = ((Label)control).Location.Y;
                         int width2 = ((Label)control).Width;
                         int height2 = ((Label)control).Height;
-                        //  Console.WriteLine(string.Concat(new object[] { "Label ", x1, ",", num1, "  w:", width2, ", h:", height2 }));
+                        //  Console.WriteLine(string.Concat(new Object[] { "Label ", x1, ",", num1, "  w:", width2, ", h:", height2 }));
                         bmp = mSmcEink.ConvertTextToImageDemo(bmp, (Label)control, Color.Black, x1, num1);
                     }
                 }
@@ -662,29 +726,25 @@ namespace EslLibCom
         }
 
 
-        void OnSMCEslReceiveEvent(object sender ,EventArgs e)
+        private void OnSMCEslReceiveEvent(Object sender ,EventArgs e)
             {
+
+
             int msgId = (e as NfcEslLib.SMCEslReceiveEventArgs).msgId;
             bool status = (e as NfcEslLib.SMCEslReceiveEventArgs).status;
             int Index = (e as NfcEslLib.SMCEslReceiveEventArgs).Index;
             byte[] data = (e as NfcEslLib.SMCEslReceiveEventArgs).data;
 
             string NFCID = ByteArrayToString(data);
-          /*  SMCEslReceiveEventArgs rClass = new SMCEslReceiveEventArgs();
-            rClass.msgId = msgId;
-            rClass.Index = Index;
-            rClass.status = status;
-            rClass.data = data;*/
-           // Console.WriteLine("MSG    "+ msgId);
-            /*    socklin = bcSocket.Accept();
-                if (socklin.Connected)
-                {
-                    Console.WriteLine("56666666666666");
-                }*/
+            if (msgId == 1 && status == true)
+                ddt = "msgId:" + msgId + ",status:" + status + ",NFCID:" + NFCID;
+            else
+                ddt = "msgId:" + msgId + ",status:" + status;
+           
+
+            //  Console.WriteLine("ddt " + ddt);
             string result = "msgId:" + msgId + ",Index:" + Index + ",status:" + status + ",data:" + ByteArrayToString(data);
             byte[] msg = Encoding.ASCII.GetBytes(result);
-            //Console.WriteLine("ddd  "+ msg.Length);
-           // byte[] msg  =  ObjectToByteArray(rClass);
             foreach (Socket socket in clientSockets)
                     socket.Send(msg); //send everything to all clients as bytes
            
@@ -692,7 +752,7 @@ namespace EslLibCom
 
         }
 
-        byte[] ObjectToByteArray(object obj)
+        byte[] ObjectToByteArray(Object obj)
         {
            // Console.WriteLine(obj);
             if (obj == null)
@@ -726,112 +786,4 @@ namespace EslLibCom
         public int Index;
         public byte[] data;
     }
-    /*  [Guid("8791D490-F0B1-4198-9582-2DDE3EA4AD64")]
-      public interface EslLibCOMInterface
-      {
-          [DispId(1)]
-          bool portOpen(string portName, string baurate);
-
-          [DispId(2)]
-          bool portIsOpen();
-
-          [DispId(3)]
-          bool EslSeting();
-
-          [DispId(4)]
-          bool EslSeting2Color();
-
-          [DispId(5)]
-          bool eslImagePix(Bitmap bmp);
-
-          [DispId(6)]
-          bool eslImagePix2Color(Bitmap bmp);
-
-          [DispId(7)]
-          bool eslImageLockBit(Bitmap bmp);
-
-          [DispId(8)]
-          bool sendWriteEslClose();
-
-          [DispId(9)]
-          bool eslUUIDRead();
-
-          [DispId(10)]
-          event EventHandler SMCEslReceiveEvent;
-
-      }
-
-      [Guid("009E0FB6-BF2E-4C32-BAAF-5BD38E7B1CCC")]
-      [ClassInterface(ClassInterfaceType.None)] //表示沒有為該class產生COM介面
-      [ProgId("TestVBA.COM4BCBDemo")]
-      public class COM4BCBDemo : EslLibCOMInterface
-      {
-
-          private NfcEslLib EslLib = new NfcEslLib();
-
-          public bool portOpen(string portName, string baurate)
-          {
-              return EslLib.portOpen(portName, baurate);
-          }
-
-          public bool portIsOpen()
-          {
-              return EslLib.portIsOpen();
-          }
-
-          public bool EslSeting()
-          {
-              return EslLib.EslSeting();
-          }
-
-          public bool EslSeting2Color()
-          {
-              return EslLib.EslSeting2Color();
-          }
-
-          public bool eslImagePix(Bitmap bmp)
-          {
-              return EslLib.eslImagePix(bmp);
-          }
-
-          public bool eslImagePix2Color(Bitmap bmp)
-          {
-              return EslLib.eslImagePix2Color(bmp);
-          }
-
-          public bool eslImageLockBit(Bitmap bmp)
-          {
-              return EslLib.eslImageLockBit(bmp);
-          }
-
-          public bool eslUUIDRead()
-          {
-              return EslLib.eslUUIDRead();
-          }
-
-          public bool sendWriteEslClose()
-          {
-              return EslLib.sendWriteEslClose();
-          }
-
-          public  event EventHandler SMCEslReceiveEvent;
-
-          public void SMCEslReceiveEventNow()
-          {
-              OnSMCEslReceiveEvent(new SMCEslReceiveEventArgs());
-          }
-
-          void OnSMCEslReceiveEvent(SMCEslReceiveEventArgs e)
-          {
-              if (SMCEslReceiveEvent != null) SMCEslReceiveEvent(this, e);
-          }
-
-      }
-      public class SMCEslReceiveEventArgs : EventArgs
-      {
-          public int msgId;
-          public bool status;
-          public int Index;
-          public byte[] data;
-      }*/
 }

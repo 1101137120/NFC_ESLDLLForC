@@ -569,7 +569,7 @@ namespace EslLibCom
             if (RX[0] == (byte)0x05 && RX[2] == (byte)0x26 && RX[3] == (byte)0x00)
             {
                 System.Threading.Thread.Sleep(2000);
-               
+                
                 SMCEslReceiveEventArgs obj = new SMCEslReceiveEventArgs();
                 obj.msgId = msg_SetEslDefault;
                 obj.status = true;
@@ -580,6 +580,7 @@ namespace EslLibCom
             }
             else if (RX[0] == (byte)0x05 && RX[2] == (byte)0x26 && RX[3] != (byte)0x00)
             {
+
                 SMCEslReceiveEventArgs obj = new SMCEslReceiveEventArgs();
                 obj.msgId = msg_SetEslDefault;
                 obj.status = false;
@@ -720,7 +721,7 @@ namespace EslLibCom
             {
                 //error
 
-                sendWriteEslClose();
+                //sendWriteEslClose();
                 SMCEslReceiveEventArgs obj = new SMCEslReceiveEventArgs();
                 obj.msgId = msg_WriteEslData;
                 obj.status = false;
